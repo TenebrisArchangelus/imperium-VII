@@ -106,3 +106,24 @@ export const ConsultInValiditas = async (coluna, campo) => {
       console.log('Houve um erro ao realizar a consulta do usuário:', error);
     };
   };
+
+
+  
+export const ConsultTransactions = async (Id) => {
+    try {
+
+        const connection = await VerificaConexao();
+        const results = await connection.promise().query('SELECT * FROM transactions WHERE id_user = ?', [Id]);
+        const user = await results[0][0];
+        if (results.length === 0) {
+            res.status(404).json({ msg: 'Data não encontrada.' });
+            connection.release();
+            return;
+        };
+        connection.release();
+        return user;
+
+    } catch (erro) {
+        console.log('Houve um erro ao realizar a consulta da data:', erro);
+    };
+};

@@ -1,4 +1,4 @@
-import { criarSessaoVipPremium, criarSessaoVipVhs, StatusSession } from '../libraries/Payment.js'
+import { criarSessaoVipPremium, criarSessaoVipVhs, StatusPayment } from '../libraries/Payment.js'
 import { Data } from '../libraries/Tempus.js'
 import { InsertTransaction } from '../models/Inserts.js';
 import { ConsultById } from '../models/Consults.js';
@@ -43,12 +43,14 @@ export async function SuccessSession(req, res) {
 
     try {
         const user = await ConsultById(id);
-        const sessao = await StatusSession(idSessao);
-        const data = await Data(sessao.created);
+        const sessao = await StatusPayment(idSessao);
+        console.log(sessao)
+        const dataI = await Data(sessao.created);
+        const dataII = sessao.created;
         const Item = sessao.amount_subtotal;
         const PaymentStatus = sessao.payment_status;
 
-        if (PaymentStatus === "paid") {
+        if (PaymentStatus === "succeeded") {
             switch (Item) {
                 case 1599:
                     role = "premium",
@@ -63,7 +65,7 @@ export async function SuccessSession(req, res) {
                 default:
                     res.status(500).json("Houve um erro ao selecionar o produto comprado");
             };
-            await InsertTransaction(id, sessao, data);
+            await InsertTransaction(id, sessao, dataI, dataII);
             await sendEmail(user.email, assinatura);
         };
 
@@ -73,3 +75,16 @@ export async function SuccessSession(req, res) {
         res.status(500).json({ error: 'Sentimos muito, mas houve um erro interno do servidor.' });
     };
 };
+
+
+
+
+/*
+StatusPagamento(idAssinatura)
+    .then((status) => {
+        console.log('Status de pagamento:', status);
+    })
+    .catch((error) => {
+        console.error('Erro ao verificar o status de pagamento:', error);
+    });
+    */

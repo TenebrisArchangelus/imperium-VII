@@ -14,6 +14,20 @@ export const UpdateUser = async (name, email, apelido, tel, cpf, passwordNew, ro
 };
 
 
+export const UpdateUserII = async (role, id) => {
+    try {
+
+        const connection = await VerificaConexao();
+        await connection.promise().query('UPDATE users SET role = ? WHERE id = ?', [role, id]);
+        connection.release();
+        return;
+
+    } catch (erro) {
+        console.log('Houve um erro ao tentar alterar o usuário:', erro);
+    };
+};
+
+
 export const UpdateComment = async (name, email, text, id) => {
     try {
 
@@ -24,5 +38,19 @@ export const UpdateComment = async (name, email, text, id) => {
 
     } catch (erro) {
         console.log('Houve um erro ao tentar editar o comentário:', erro);
+    };
+};
+
+
+export const UpdateTransactions = async (data, compra, renovar, id) => {
+    try {
+
+        const connection = await VerificaConexao();
+        await connection.promise().query('UPDATE transactions SET data_compra = ?, id_compra = ?, renovar = ? WHERE id_user = ?', [data, compra, renovar, id]);
+        connection.release();
+        return;
+
+    } catch (erro) {
+        console.log('Houve um erro ao tentar alterar o usuário:', erro);
     };
 };

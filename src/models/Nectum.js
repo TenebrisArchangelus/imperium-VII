@@ -11,6 +11,7 @@ export const VerificaConexao = async () => {
         return connection;
 
     } catch (erro) {
-        console.log('Houve um erro ao obter a conexão do pool:', erro);
+        const Mendum = { Erro: erro.code, Mensagem: erro.sqlMessage, Status: erro.sqlState, ErroID: erro.errno, Info: erro.sql};
+        console.log('Houve um erro ao obter a conexão do pool:', Mendum);
     };
 };

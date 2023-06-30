@@ -5,6 +5,7 @@ import { InsertRegistro } from '../models/Inserts.js';
 import { CriarToken } from '../libraries/Jwt.js';
 import { CompararSenhas, SenhaHash } from '../libraries/bcrypt.js';
 import { sendEmail } from '../libraries/SendEmail.js';
+import { VerificaRole } from '../libraries/Tempus.js';
 
 //Função de Registro
 export async function RegistrarUser(req, res) {
@@ -38,9 +39,12 @@ export async function LoginUser(req, res) {
 
     const user = await ConsultByApelido(apelido);
     await CompararSenhas(password, user.password);
+    if (user.role == 'vhs' || user.role == 'premium') {
+      await VerificaRole(user.id, user.email);
+    };
 
     // res.cookie('token', token, { httpOnly: true, secure: true, maxAge: 604800000 });
-    const token = await CriarToken({id: user.id, role: user.role})
+    const token = await CriarToken({ id: user.id, role: user.role })
     res.cookie('token', token, { httpOnly: true, maxAge: 604800000 });
     res.status(200).json({ msg: `Autenticação realizada com sucesso, ${user.name}` });
 
@@ -72,7 +76,7 @@ export async function AdmUser(req, res) {
   const acesso = "ADM";
 
   try {
-    
+
     const resultado = await Examinare(id, acesso);
     if (resultado.validez) {
       return res.status(200).json({ msg: resultado.msg });

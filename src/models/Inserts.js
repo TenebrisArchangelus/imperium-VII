@@ -30,12 +30,12 @@ export const InsertComentario = async (lastId, id, name, email, text) => {
 };
 
 
-export const InsertTransaction = async (id, sessao, data) => {
+export const InsertTransaction = async (id, sessao, data, renovar) => {
     try {
         const connection = await VerificaConexao();
 
-        const insertQuery = 'INSERT INTO transactions (id_user, id_compra, data) VALUES (?, ?, ?)';
-        await connection.promise().query(insertQuery, [id, sessao, data]);
+        const insertQuery = 'INSERT INTO transactions (id_user, id_compra, data_compra, renovar) VALUES (?, ?, ?, ?)';
+        await connection.promise().query(insertQuery, [id, sessao, data, renovar]);
         
         connection.release();
         return;

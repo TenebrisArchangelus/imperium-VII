@@ -26,6 +26,5 @@ export const ADM_senha = process.env.ADM_SENHA;
 export const T_secret = process.env.SECRET;
 
 //Criar tabela no mysql para registrar as compras.
-//Lembrar de fazer a lógica de rota para revogar o role VIP Premium ou User com o sucesso dos pagamentos
-//buscar senhas de app da conta da imperium para poder trocar a email pass.
 //Rota para voce esqueceu a senha
+//criar pasta Error e fazer tratamentos com  throw new Error('Erro'); , por exemplo.
