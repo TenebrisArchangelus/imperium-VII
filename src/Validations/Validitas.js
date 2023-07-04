@@ -1,136 +1,134 @@
-import { ConsultInValiditas } from '../models/Consults.js';
+import { ConsultInUsers } from '../models/Consults.js';
+import { NameValidum, EmailValidum, CpfValidum, TelValidum, PasswordValidum, UserValidum } from '../libraries/Codex.js';
 
-
-//Aceitamos eszett(ß) nas senhas :D 
 //Validação no registro
 export async function validus(check) {
-    const NameValidus = /^\s*\S.*$/i;
-    const EmailValidus = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const CpfValidus = /^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}$/;
-    const TelValidus = /^\+\d{2} \(\d{2}\) \d{4,5}\-\d{4}$/;
-    const PasswordValidus = /^(?=.*\d)(?=.*[a-zß])(?=.*[A-Z])(?=.*[@#$%^&+=*])[a-zA-Z\dß@#$%^&+=*]{8,}$/;
+    const CampusCodicisI = await NameValidum(check.name);
+    const CampusCodicisII = await EmailValidum(check.email);
+    const CampusCodicisIII = await CpfValidum(check.cpf);
+    const CampusCodicisIV = await TelValidum(check.tel);
+    const CampusCodicisV = await PasswordValidum(check.password);
+    const CampusCodicisVI = await UserValidum(check.name, check.email, check.apelido, check.cpf);
 
-    const resultsName = await ConsultInValiditas('name', check.name);
-    const resultsEmail = await ConsultInValiditas('email', check.email);
-    const resultsApelido = await ConsultInValiditas('apelido', check.apelido);
-    const resultsCpf = await ConsultInValiditas('cpf', check.cpf);
 
-    const user = {
-        name: resultsName[0][0] ? resultsName[0][0].name : null,
-        email: resultsEmail[0][0] ? resultsEmail[0][0].email : null,
-        apelido: resultsApelido[0][0] ? resultsApelido[0][0].apelido : null,
-        cpf: resultsCpf[0][0] ? resultsCpf[0][0].cpf : null
-    };
-
-    if (user.name === check.name) {
+    if (CampusCodicisVI.name === check.name) {
         return { validez: false, msg: `${check.name} já possui um cadastro. Por favor, utilize outro nome ou contacte-nos para obter suporte.` };
     };
-    if (!NameValidus.test(check.name) || !check.name) {
+    if (!CampusCodicisI) {
         return { validez: false, msg: 'Nome inválido.' };
     };
-    if (user.email === check.email) {
-        return { validez: false, msg: `O email ${user.email} já possui cadastro. Por favor, utilize outro.` };
+
+    if (CampusCodicisVI.email === check.email) {
+        return { validez: false, msg: `O email ${CampusCodicisVI.email} já possui cadastro. Por favor, utilize outro.` };
     };
-    if (!EmailValidus.test(check.email) || !check.email) {
+    if (!CampusCodicisII) {
         return { validez: false, msg: 'E-mail inválido.' };
     };
-    if (resultsApelido[0].length > 0 || !check.apelido) {
+
+    if (CampusCodicisVI.apelidoII || !check.apelido) {
         return { validez: false, msg: 'Nome de usuário já existente ou inválido' };
     };
-    if (user.cpf === check.cpf) {
-        return { validez: false, msg: `O CPF ${check.cpf} já possui cadastro com o email ${user.email}. Por favor, utilize outro.` };
+
+    if (CampusCodicisVI.cpf === check.cpf) {
+        return { validez: false, msg: `O CPF ${CampusCodicisVI.cpf} já possui cadastro com outro email. Por favor, utilize outro.` };
     };
-    if (!CpfValidus.test(check.cpf) || !check.cpf) {
-        return { validez: false, msg: 'CPF inválido ou escrito incorretamente: 123.456.789-10' };
+    if (!CampusCodicisIII) {
+        return { validez: false, msg: 'CPF inválido ou escrito incorretamente: 123.456.789-10.' };
     };
-    if (!TelValidus.test(check.tel) || !check.tel) {
-        return { validez: false, msg: 'Telefone inválido ou escrito incorretamente: +55 (21) 98769-6778 ou +55 (21) 4002-8922' };
+    if (CampusCodicisVI.cpfII || !check.cpf) {
+        return { validez: false, msg: 'CPF inválido ou já existente.' };
+    };
+
+    if (!CampusCodicisIV) {
+        return { validez: false, msg: 'Telefone inválido ou escrito incorretamente: +55 (21) 98769-6778 ou +55 (21) 4002-8922.' };
+    };
+
+    if (!CampusCodicisV) {
+        return {
+            validez: false,
+            msg: 'A senha deve conter no mínimo 8 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial (@#$%^&+=*).',
+        };
     };
     if (check.password != check.confirmpassword) {
-        return { validez: false, msg: 'As senhas não coincidem.' };
+        return { validez: false, msg: `As senhas não coincidem.` };
     };
-    if (!PasswordValidus.test(check.password) || !check.password || check.password.length < 8 || check.password.length > 12) {
-        return { validez: false, msg: 'A senha deve conter letras maiúsculas, minúsculas, números e caracteres especiais, possuindo de 8 a 12 caracteres.' };
-    };
+
     return { validez: true };
 };
 
 
+
 export async function Legitimus(check) {
-    const NameValidus = /^\s*\S.*$/i;
-    const EmailValidus = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const CpfValidus = /^[0-9]{3}\.[0-9]{3}\.[0-9]{3}\-[0-9]{2}$/;
-    const TelValidus = /^\+\d{2} \(\d{2}\) \d{4,5}\-\d{4}$/;
-    const PasswordValidus = /^(?=.*\d)(?=.*[a-zß])(?=.*[A-Z])(?=.*[@#$%^&+=*])[a-zA-Z\dß@#$%^&+=*]{8,}$/;
+    const ID = req.user.id;
 
-    const ratificare = await ConsultInValiditas('apelido', check.apelido);
-    const resultsName = await ConsultInValiditas('name', check.name);
-    const resultsEmail = await ConsultInValiditas('email', check.email);
-    const resultsCpf = await ConsultInValiditas('cpf', check.cpf);
+    const CampusCodicisI = await NameValidum(check.name);
+    const CampusCodicisII = await EmailValidum(check.email);
+    const CampusCodicisIII = await CpfValidum(check.cpf);
+    const CampusCodicisIV = await TelValidum(check.tel);
+    const CampusCodicisV = await PasswordValidum(check.password);
+    const CampusCodicisVI = await UserValidum(check.name, check.email, check.apelido, check.cpf);
+    const user = await ConsultInUsers('id', ID)
 
-    const usersDB = {
-        name: resultsName[0][0] ? resultsName[0][0].name : null,
-        email: resultsEmail[0][0] ? resultsEmail[0][0].email : null,
-        cpf: resultsCpf[0][0] ? resultsCpf[0][0].cpf : null
+    if (CampusCodicisVI.name === check.name && check.name != user.name) {
+        return { validez: false, msg: `${check.name} já possui um cadastro. Por favor, utilize outro nome ou contate-nos para obter suporte.` };
+    };
+    if (!CampusCodicisI) {
+        return { validez: false, msg: 'Nome inválido.' };
     };
 
-    const user = ratificare[0];
-
-    if (usersDB.name === check.name && check.name != user[0].name) {
-        return { validez: false, msg: `${check.name} já possui um cadastro. Por favor, utilize outro ou contacte-nos para obter suporte.` };
-    };
-    if (!check.name || check.name === user[0].name) {
-        check.name = user[0].name;
-    };
-    if (!NameValidus.test(check.name)) {
-        return { validez: false, msg: 'O novo nome é inválido.' };
-    };
-
-    if (usersDB.email === check.email && check.email != user[0].email) {
+    if (CampusCodicisVI.email === check.email && check.email != user.email) {
         return { validez: false, msg: `O email ${check.email} já possui cadastro. Por favor, utilize outro.` };
     };
-    if (!check.email || check.email === user[0].email) {
-        check.email = user[0].email;
-    };
-    if (!EmailValidus.test(check.email)) {
-        return { validez: false, msg: 'O novo e-mail é inválido.' };
+    if (CampusCodicisII) {
+        return { validez: false, msg: 'E-mail inválido.' };
     };
 
-    if (!check.apelido || check.apelido === user[0].apelido) {
-        check.apelido = user[0].apelido;
+    if (CampusCodicisVI.cpfII && check.cpf != user.cpf) {
+        return { validez: false, msg: `O CPF ${CampusCodicisVI.cpf} já possui cadastro com outro email. Por favor, utilize outro.` };
     };
-    if (check.apelido !== user[0].apelido && ratificare[0].length > 0) {
-        return { validez: false, msg: 'O novo nome de usuário já existe ou é inválido' };
-    };
-
-    if (user.cpf === check.cpf && check.cpf != user[0].cpf) {
-        return { validez: false, msg: `O CPF ${check.cpf} já possui cadastro com o email ${user[0].email}. Por favor, utilize outro.` };
-    };
-    if (!check.cpf || check.cpf === user[0].cpf) {
-        check.cpf = user[0].cpf;
-    };
-    if (!CpfValidus.test(check.cpf)) {
-        return { validez: false, msg: 'O novo CPF inválido ou escrito incorretamente: 123.456.789-10' };
+    if (!CampusCodicisIII) {
+        return { validez: false, msg: 'CPF inválido ou escrito incorretamente: 123.456.789-10.' };
     };
 
-    if (!check.tel || check.tel === user[0].tel) {
-        check.tel = user[0].tel;
-    };
-    if (!TelValidus.test(check.tel)) {
-        return { validez: false, msg: 'O novo número de telefone inválido ou escrito incorretamente: +55 (21) 98769-6778 ou +55 (21) 4002-8922' };
+    if (!CampusCodicisIV) {
+        return { validez: false, msg: 'Telefone inválido ou escrito incorretamente: +55 (21) 98769-6778 ou +55 (21) 4002-8922.' };
     };
 
+    if (check.password && !CampusCodicisV) {
+        return {
+            validez: false,
+            msg: 'A senha deve conter no mínimo 8 caracteres, incluindo pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial (@#$%^&+=*).',
+        };
+    }
     if (!check.password && !check.confirmpassword) {
         return { validez: true };
     };
     if (check.password !== check.confirmpassword) {
         return { validez: false, msg: 'As novas senhas não coincidem.' };
     };
-    if (!PasswordValidus.test(check.password) || check.password.length < 8 || check.password.length > 12) {
-        return { validez: false, msg: 'A senha deve conter letras maiúsculas, minúsculas, números e caracteres especiais, possuindo de 8 a 12 caracteres.' };
+
+    if (!check.name || check.name === user.name) {
+        check.name = user.name;
     };
+    if (!check.email || check.email === user.email) {
+        check.email = user.email;
+    };
+    if (!check.cpf || check.cpf === user.cpf) {
+        check.cpf = user.cpf;
+    };
+    if (!check.apelido || check.apelido === user.apelido) {
+        check.apelido = user.apelido;
+    };
+    if (!check.tel || check.tel === user.tel) {
+        check.tel = user.tel;
+    };
+    if (!check.password || check.password === user.password) {
+        check.password = user.password;
+    };
+
     return { validez: true };
-};
+}
+
 
 
 export async function Probatus(check) {
