@@ -1,8 +1,10 @@
 import { ConsultInUsers, ConsultInComments, OrderById } from '../models/Consults.js';
+import { ConsultInUsers, ConsultInComments, OrderById } from '../models/Consults.js';
 import { InsertComentario } from '../models/Inserts.js';
 import { UpdateComment, UpdateUser } from '../models/Updates.js';
 import { DeleteComentario, DeleteUser } from '../models/Delete.js';
 import { Examinare } from '../Validations/Auctoritatem.js';
+import { sendEmail } from '../libraries/SendEmail.js';
 import { sendEmail } from '../libraries/SendEmail.js';
 
 // Rota de obtenção de dados do usuário para edição
@@ -100,6 +102,7 @@ export async function FiltrarComments(req, res) {
     if (ID != id) {
         const resultado = await Examinare(ID, acesso);
         if (!resultado.validez) {
+            return;
             return;
         };
 

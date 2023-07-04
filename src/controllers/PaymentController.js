@@ -75,16 +75,3 @@ export async function SuccessSession(req, res) {
         res.status(500).json({ error: 'Sentimos muito, mas houve um erro interno do servidor.' });
     };
 };
-
-
-
-
-/*
-StatusPagamento(idAssinatura)
-    .then((status) => {
-        console.log('Status de pagamento:', status);
-    })
-    .catch((error) => {
-        console.error('Erro ao verificar o status de pagamento:', error);
-    });
-    */
