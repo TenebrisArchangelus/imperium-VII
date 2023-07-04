@@ -1,4 +1,4 @@
-import { ConsultByApelido } from '../models/Consults.js';
+import { ConsultInUsers } from '../models/Consults.js';
 import { ADM_senha } from '../config.js';
 import { Examinare } from '../Validations/Auctoritatem.js';
 import { InsertRegistro } from '../models/Inserts.js';
@@ -18,10 +18,10 @@ export async function RegistrarUser(req, res) {
   };
 
   try {
-
+    
     const passwordHash = await SenhaHash(password);
     await InsertRegistro(name, email, apelido, tel, cpf, passwordHash, role);
-    await sendEmail(email, 'registro');
+    await sendEmail(email, 'registro', { name, email, apelido, tel, cpf, password, role });
     res.status(201).json({ msg: 'Usuário cadastrado com sucesso!' });
 
   } catch (erro) {
@@ -37,7 +37,7 @@ export async function LoginUser(req, res) {
 
   try {
 
-    const user = await ConsultByApelido(apelido);
+    const user = await ConsultInUsers('apelido', apelido);
     await CompararSenhas(password, user.password);
     if (user.role == 'vhs' || user.role == 'premium') {
       await VerificaRole(user.id, user.email);

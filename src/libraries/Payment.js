@@ -42,9 +42,8 @@ export async function criarSessaoVipVhs() {
 //Consulta com base no ID
 export async function StatusPayment(IdSession) {
     try {
-        const subscription = await stripe.subscriptions.retrieve(IdSession);
-        const statusPagamento = subscription.latest_invoice.payment_intent.status;
-        return statusPagamento;
+        const sessao = await stripe.checkout.sessions.retrieve(IdSession);
+        return sessao;
     } catch (erro) {
         console.error('Houve um erro ao verificar o status de pagamento:', erro);
     };

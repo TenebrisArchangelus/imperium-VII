@@ -1,10 +1,15 @@
 import jwt from "jsonwebtoken";
 import { T_secret } from '../config.js';
 
-export async function CriarToken(payload) {
+export async function CriarToken(payload, Situation) {
     let token;
 
     try {
+
+        if (Situation == 'RecSenha') {
+            token = jwt.sign(payload, T_secret, { expiresIn: '1h' });
+            return token;
+        };
 
         if (payload.role == 'ADM') {
             token = jwt.sign(payload, T_secret, { expiresIn: '24h' });

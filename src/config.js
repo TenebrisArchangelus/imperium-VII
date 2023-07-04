@@ -24,7 +24,8 @@ export const S_premium = process.env.S_PREMIUM;
 export const porta = process.env.PORT;
 export const ADM_senha = process.env.ADM_SENHA;
 export const T_secret = process.env.SECRET;
+export const R_secret = process.env.REC_SECRET;
 
-//Criar tabela no mysql para registrar as compras.
-//Rota para voce esqueceu a senha
+
 //criar pasta Error e fazer tratamentos com  throw new Error('Erro'); , por exemplo.
+//pegar o link da página front-end que só vai aparecer pelo link no email
