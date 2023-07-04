@@ -1,7 +1,7 @@
-import { ConsultById } from '../models/Consults.js';
+import { ConsultInUsers } from '../models/Consults.js';
 
 export async function Examinare(id, acesso) {
-    const Potestatem = await ConsultById(id);
+    const Potestatem = await ConsultInUsers('id', id);
 
     if (Potestatem.role === 'ADM') {
         if ((acesso === "ADM" || acesso === 'vhs' || acesso === 'premium' || acesso === 'user')) {
