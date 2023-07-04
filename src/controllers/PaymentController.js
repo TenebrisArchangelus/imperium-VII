@@ -1,7 +1,8 @@
 import { criarSessaoVipPremium, criarSessaoVipVhs, StatusPayment } from '../libraries/Payment.js'
 import { Data } from '../libraries/Tempus.js'
 import { InsertTransaction } from '../models/Inserts.js';
-import { ConsultById } from '../models/Consults.js';
+import { ConsultInUsers } from '../models/Consults.js';
+import { sendEmail } from '../libraries/SendEmail.js';
 
 //Cria a sessão de venda
 export async function CriarSession(req, res) {
@@ -37,17 +38,16 @@ export async function CriarSession(req, res) {
 //Função de sucesso
 export async function SuccessSession(req, res) {
     const id = req.user.id;
-    const idSessao = req.status;
+    const idSessao = 'cs_test_a1RrI2EpvQak0NguuUpc6MgnviOl8BO7XfnXWze3OREMmEy1OnWnzEoIPG';
     let role = " ";
     let assinatura = " ";
 
     try {
-        const user = await ConsultById(id);
+        const user = await ConsultInUsers('id', id);
         const sessao = await StatusPayment(idSessao);
-        console.log(sessao)
         const dataI = await Data(sessao.created);
         const dataII = sessao.created;
-        const Item = sessao.amount_subtotal;
+        const Item = sessao.amount;
         const PaymentStatus = sessao.payment_status;
 
         if (PaymentStatus === "succeeded") {
@@ -66,7 +66,7 @@ export async function SuccessSession(req, res) {
                     res.status(500).json("Houve um erro ao selecionar o produto comprado");
             };
             await InsertTransaction(id, sessao, dataI, dataII);
-            await sendEmail(user.email, assinatura);
+            await sendEmail(user.email, assinatura, user.apelido);
         };
 
         res.redirect('http://localhost:3000/api/login/user');
@@ -75,16 +75,3 @@ export async function SuccessSession(req, res) {
         res.status(500).json({ error: 'Sentimos muito, mas houve um erro interno do servidor.' });
     };
 };
-
-
-
-
-/*
-StatusPagamento(idAssinatura)
-    .then((status) => {
-        console.log('Status de pagamento:', status);
-    })
-    .catch((error) => {
-        console.error('Erro ao verificar o status de pagamento:', error);
-    });
-    */
